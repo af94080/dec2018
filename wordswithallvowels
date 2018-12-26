@@ -1,0 +1,13 @@
+def has_all_vowels_two(word):
+    vowels = 'aeiou'
+    for vowel in vowels:
+        if vowel not in word:
+            return False
+    return True
+    
+import scrabble
+
+
+for word in scrabble.wordlist:
+    if has_all_vowels_two(word):
+        print(word)    
