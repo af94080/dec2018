@@ -1,0 +1,40 @@
+# 1) connect to s3
+
+import boto3 
+import json
+import simplejson
+
+client = boto3.client("s3")
+resource = boto3.resource('s3') 
+
+my_bucket = resource.Bucket('my-bucket') 
+
+# 2) get list of files in my bucket and folder
+
+files = list(my_bucket.objects.filter(Prefix='folder/subfolder'))
+
+# list all files
+print(files)
+
+# 3) get one file
+
+# get one file
+my_file_key = 'folder/subfolder/myFile.json' # this is smaller
+my_bucket = 'my-bucket'
+obj = client.get_object(Bucket=my_bucket, Key=my_file_key)
+file_content = (line for line in obj['Body'].iter_lines()) # this is a generator
+
+#4) display just one row
+
+for i, line in enumerate(file_content):
+    if i < 1:
+        pretty_data = json.loads(line.decode())  
+        print(pretty_data) 
+        
+#5) write 5 rows to local file
+
+with open("LocalFile.json", "w") as jsonDataFile:
+
+    for i, line in enumerate(file_content):
+        if i < 5: # write just few rows
+            jsonDataFile.write(simplejson.dumps(simplejson.loads(line), indent=4, sort_keys=True))
