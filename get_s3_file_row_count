@@ -1,0 +1,18 @@
+# import libs
+
+import boto3 
+import json
+client = boto3.client("s3")
+resource = boto3.resource('s3') #high-level object-oriented API
+my_bucket = resource.Bucket('bi-edw-uat') #s
+
+def get_nbr_of_ids_in_json_file(my_bucket, my_file_key):
+    obj = client.get_object(Bucket=my_bucket, Key=my_file_key)
+    file_content = (line for line in obj['Body'].iter_lines())
+    ids = (data['Id'] for line in file_content for data in json.loads(line.decode()))
+    return len(list(ids))  # this is still really slow for large files
+    
+my_bucket = '**-**-***'
+my_file_key = 'edw/inbound/***.json' 
+
+print(get_nbr_of_ids_in_json_file(my_bucket, my_file_key))
